@@ -1,1 +1,3 @@
 /reference
+/streamlit_abcjs_score/frontend/node_modules
+*.pyc

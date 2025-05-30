@@ -95,7 +95,7 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
         this.abcContainer.current.innerHTML = ""
         
         // Configure rendering options
-        const renderOptions = {
+        const renderOptions: any = {
           scale: scale,
           staffwidth: responsive ? undefined : 600,
           responsive: responsive ? "resize" : undefined,

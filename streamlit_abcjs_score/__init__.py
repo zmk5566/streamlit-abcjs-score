@@ -1,6 +1,13 @@
 import os
+import mimetypes
 import streamlit.components.v1 as components
 from typing import Optional
+
+# Register MIME types to ensure proper file serving
+mimetypes.add_type('application/javascript', '.js')
+mimetypes.add_type('text/css', '.css')
+mimetypes.add_type('application/json', '.json')
+mimetypes.add_type('text/html', '.html')
 
 # Create a _component_func which will call the frontend component.
 # We create this here so we can add some caching, import the frontend HTML, etc.
