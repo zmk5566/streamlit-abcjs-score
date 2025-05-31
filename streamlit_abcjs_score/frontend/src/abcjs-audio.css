@@ -185,3 +185,13 @@
 .abcjs-css-warning {
 	display: none;
 }
+
+/* Fix for unwanted padding-bottom from ABCJS responsive mode */
+.abcjs-container {
+	padding-bottom: 0 !important;
+}
+
+/* Alternative fix targeting the specific responsive container */
+div[style*="padding-bottom"] {
+	padding-bottom: 0 !important;
+}
