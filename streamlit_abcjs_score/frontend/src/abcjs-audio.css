@@ -189,19 +189,10 @@
 /* Fix for unwanted padding-bottom from ABCJS responsive mode */
 .abcjs-container {
 	padding-bottom: 0 !important;
+	margin-bottom: -30px;
 }
 
 /* Alternative fix targeting the specific responsive container */
 div[style*="padding-bottom"] {
 	padding-bottom: 0 !important;
-}
-
-/* Fix for min-height override */
-.abcjs-container {
-	min-height: 10% !important;
-}
-
-/* Alternative fix targeting divs with min-height styles */
-div[style*="min-height"] {
-	min-height: 10% !important;
 }
