@@ -5,6 +5,7 @@ import {
 } from "streamlit-component-lib"
 import React, { ReactNode } from "react"
 import * as ABCJS from "abcjs"
+import "./abcjs-audio.css"
 
 interface State {
   numClicks: number
