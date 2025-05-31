@@ -195,3 +195,13 @@
 div[style*="padding-bottom"] {
 	padding-bottom: 0 !important;
 }
+
+/* Fix for min-height override */
+.abcjs-container {
+	min-height: 10% !important;
+}
+
+/* Alternative fix targeting divs with min-height styles */
+div[style*="min-height"] {
+	min-height: 10% !important;
+}
