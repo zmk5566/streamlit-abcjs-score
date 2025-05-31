@@ -148,8 +148,9 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
   /** Component lifecycle methods **/
   public componentDidMount = (): void => {
     console.log("🎵 AbcScoreComponent: componentDidMount started")
-    this.renderAbc()
+    // Initialize synth first, then render ABC, then connect them
     this.initializeSynth()
+    this.renderAbc()
     // Tell Streamlit we're ready to start receiving data. We won't get our
     // first RENDER_EVENT until we call this function.
     Streamlit.setComponentReady()
@@ -251,11 +252,10 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
         console.log("🎵 renderAbc: synthControl =", this.synthControl)
         console.log("🎵 renderAbc: visualObj =", this.visualObj)
         
-        if (enableAudio && this.synthControl && this.visualObj) {
-          console.log("🎵 renderAbc: Setting up synth with notation")
-          this.setupSynthWithNotation()
-        } else {
-          console.log("🎵 renderAbc: Skipping synth setup - conditions not met")
+        // Always try to connect synth after rendering, regardless of current state
+        if (enableAudio) {
+          console.log("🎵 renderAbc: Attempting to connect synth and notation")
+          this.connectSynthAndNotation()
         }
         
         // Optional: Set component height based on rendered content
@@ -282,6 +282,30 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
       }
     } else {
       console.log("🎵 renderAbc: Skipping render - notation unchanged or container missing")
+    }
+  }
+
+  private connectSynthAndNotation = (): void => {
+    console.log("🎵 connectSynthAndNotation: Attempting to connect synth and notation")
+    console.log("🎵 connectSynthAndNotation: synthControl =", this.synthControl)
+    console.log("🎵 connectSynthAndNotation: visualObj =", this.visualObj)
+    
+    if (this.synthControl && this.visualObj) {
+      console.log("🎵 connectSynthAndNotation: Both components ready, setting up connection")
+      this.setupSynthWithNotation()
+    } else {
+      console.log("🎵 connectSynthAndNotation: Components not ready yet, will retry")
+      // Retry after a short delay to allow for async initialization
+      setTimeout(() => {
+        if (this.synthControl && this.visualObj) {
+          console.log("🎵 connectSynthAndNotation: Retry successful, setting up connection")
+          this.setupSynthWithNotation()
+        } else {
+          console.log("🎵 connectSynthAndNotation: Retry failed - components still not ready")
+          console.log("🎵 connectSynthAndNotation: synthControl =", this.synthControl)
+          console.log("🎵 connectSynthAndNotation: visualObj =", this.visualObj)
+        }
+      }, 200)
     }
   }
 
