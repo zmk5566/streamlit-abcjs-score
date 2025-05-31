@@ -147,11 +147,13 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
 
   /** Component lifecycle methods **/
   public componentDidMount = (): void => {
+    console.log("🎵 AbcScoreComponent: componentDidMount started")
     this.renderAbc()
     this.initializeSynth()
     // Tell Streamlit we're ready to start receiving data. We won't get our
     // first RENDER_EVENT until we call this function.
     Streamlit.setComponentReady()
+    console.log("🎵 AbcScoreComponent: componentDidMount completed")
   }
 
   public componentDidUpdate = (): void => {
@@ -160,12 +162,24 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
 
   /** Custom methods **/
   private initializeSynth = (): void => {
+    console.log("🎵 initializeSynth: Starting synth initialization")
     const enableAudio = this.props.args["enable_audio"] !== false
+    console.log("🎵 initializeSynth: enableAudio =", enableAudio)
+    
+    // Check ABCJS availability
+    console.log("🎵 initializeSynth: ABCJS object =", ABCJS)
+    console.log("🎵 initializeSynth: ABCJS.synth =", (ABCJS as any).synth)
+    console.log("🎵 initializeSynth: supportsAudio =", (ABCJS as any).synth?.supportsAudio())
+    console.log("🎵 initializeSynth: audioContainer.current =", this.audioContainer.current)
     
     if (enableAudio && (ABCJS as any).synth?.supportsAudio()) {
+      console.log("🎵 initializeSynth: Audio is supported, creating SynthController")
       try {
         this.synthControl = new (ABCJS as any).synth.SynthController();
+        console.log("🎵 initializeSynth: SynthController created =", this.synthControl)
+        
         if (this.audioContainer.current) {
+          console.log("🎵 initializeSynth: Loading synth controls into container")
           this.synthControl.load(this.audioContainer.current, this.cursorControl, {
             displayLoop: true,
             displayRestart: true,
@@ -173,23 +187,43 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
             displayProgress: true,
             displayWarp: true
           });
+          console.log("🎵 initializeSynth: Synth controls loaded successfully")
+          
+          // Check if controls were actually created
+          setTimeout(() => {
+            const buttons = this.audioContainer.current?.querySelectorAll('button, .abcjs-btn');
+            console.log("🎵 initializeSynth: Found audio buttons =", buttons?.length, buttons);
+          }, 100);
+        } else {
+          console.error("🎵 initializeSynth: audioContainer.current is null!")
         }
       } catch (error) {
-        console.warn("Audio synthesis not available:", error);
+        console.error("🎵 initializeSynth: Error creating synth:", error);
       }
-    } else if (enableAudio && this.audioContainer.current) {
-      this.audioContainer.current.innerHTML = "<div style='color: #666; padding: 10px; text-align: center; font-size: 14px;'>Audio playback not supported in this browser.</div>";
+    } else {
+      console.log("🎵 initializeSynth: Audio not supported or disabled")
+      if (enableAudio && this.audioContainer.current) {
+        this.audioContainer.current.innerHTML = "<div style='color: #666; padding: 10px; text-align: center; font-size: 14px;'>Audio playback not supported in this browser.</div>";
+      }
     }
+    console.log("🎵 initializeSynth: Synth initialization completed")
   }
 
   private renderAbc = (): void => {
+    console.log("🎵 renderAbc: Starting ABC rendering")
     const notation = this.props.args["notation"]
     const scale = this.props.args["scale"] || 1.0
     const responsive = this.props.args["responsive"] !== false
     const enableAudio = this.props.args["enable_audio"] !== false
 
+    console.log("🎵 renderAbc: notation =", notation?.substring(0, 50) + "...")
+    console.log("🎵 renderAbc: enableAudio =", enableAudio)
+    console.log("🎵 renderAbc: currentNotation =", this.currentNotation?.substring(0, 50) + "...")
+    console.log("🎵 renderAbc: abcContainer.current =", this.abcContainer.current)
+
     // Only re-render if notation has changed
     if (notation && notation !== this.currentNotation && this.abcContainer.current) {
+      console.log("🎵 renderAbc: Notation changed, re-rendering")
       try {
         // Clear previous content
         this.abcContainer.current.innerHTML = ""
@@ -201,16 +235,27 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
           responsive: responsive ? "resize" : undefined,
           add_classes: enableAudio,
         }
+        console.log("🎵 renderAbc: renderOptions =", renderOptions)
 
         // Render the ABC notation
         const visualObjs = ABCJS.renderAbc(this.abcContainer.current, notation, renderOptions)
         this.visualObj = visualObjs[0]
+        console.log("🎵 renderAbc: visualObjs =", visualObjs)
+        console.log("🎵 renderAbc: visualObj =", this.visualObj)
         
         this.currentNotation = notation
         
         // Setup synth with the rendered notation
+        console.log("🎵 renderAbc: Checking synth setup conditions:")
+        console.log("🎵 renderAbc: enableAudio =", enableAudio)
+        console.log("🎵 renderAbc: synthControl =", this.synthControl)
+        console.log("🎵 renderAbc: visualObj =", this.visualObj)
+        
         if (enableAudio && this.synthControl && this.visualObj) {
+          console.log("🎵 renderAbc: Setting up synth with notation")
           this.setupSynthWithNotation()
+        } else {
+          console.log("🎵 renderAbc: Skipping synth setup - conditions not met")
         }
         
         // Optional: Set component height based on rendered content
@@ -219,12 +264,13 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
             const renderedHeight = this.abcContainer.current.scrollHeight
             const audioHeight = this.audioContainer.current?.scrollHeight || 0
             const totalHeight = renderedHeight + audioHeight + 40
+            console.log("🎵 renderAbc: Setting frame height to", totalHeight)
             Streamlit.setFrameHeight(Math.max(totalHeight, this.props.args["height"] || 400))
           }
         }, 100)
         
       } catch (error) {
-        console.error("Error rendering ABC notation:", error)
+        console.error("🎵 renderAbc: Error rendering ABC notation:", error)
         if (this.abcContainer.current) {
           this.abcContainer.current.innerHTML = `
             <div style="color: red; padding: 10px; text-align: center;">
@@ -234,32 +280,58 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
           `
         }
       }
+    } else {
+      console.log("🎵 renderAbc: Skipping render - notation unchanged or container missing")
     }
   }
 
   private setupSynthWithNotation = (): void => {
-    if (!this.visualObj || !this.synthControl) return;
+    console.log("🎵 setupSynthWithNotation: Starting synth setup")
+    console.log("🎵 setupSynthWithNotation: visualObj =", this.visualObj)
+    console.log("🎵 setupSynthWithNotation: synthControl =", this.synthControl)
+    
+    if (!this.visualObj || !this.synthControl) {
+      console.error("🎵 setupSynthWithNotation: Missing required objects - aborting")
+      return;
+    }
 
     try {
+      console.log("🎵 setupSynthWithNotation: Disabling synth control")
       this.synthControl.disable(true);
       
+      console.log("🎵 setupSynthWithNotation: Creating MIDI buffer")
       const midiBuffer = new (ABCJS as any).synth.CreateSynth();
+      console.log("🎵 setupSynthWithNotation: MIDI buffer created =", midiBuffer)
+      
       midiBuffer.init({
         visualObj: this.visualObj,
       }).then((response: any) => {
-        console.log("MIDI buffer created:", response);
+        console.log("🎵 setupSynthWithNotation: MIDI buffer initialized:", response);
         if (this.synthControl) {
+          console.log("🎵 setupSynthWithNotation: Setting tune on synth control")
           this.synthControl.setTune(this.visualObj, false).then((response: any) => {
-            console.log("Audio successfully loaded.");
+            console.log("🎵 setupSynthWithNotation: Audio successfully loaded:", response);
+            console.log("🎵 setupSynthWithNotation: Enabling synth control")
+            this.synthControl.disable(false);
+            
+            // Check if play button is now functional
+            setTimeout(() => {
+              const playButton = this.audioContainer.current?.querySelector('.abcjs-midi-start');
+              console.log("🎵 setupSynthWithNotation: Play button found =", playButton);
+              if (playButton) {
+                console.log("🎵 setupSynthWithNotation: Play button classes =", playButton.className);
+                console.log("🎵 setupSynthWithNotation: Play button disabled =", (playButton as any).disabled);
+              }
+            }, 100);
           }).catch((error: any) => {
-            console.warn("Audio problem:", error);
+            console.error("🎵 setupSynthWithNotation: Audio setup problem:", error);
           });
         }
       }).catch((error: any) => {
-        console.warn("Audio problem:", error);
+        console.error("🎵 setupSynthWithNotation: MIDI buffer init problem:", error);
       });
     } catch (error) {
-      console.warn("Error setting up synth:", error);
+      console.error("🎵 setupSynthWithNotation: Error setting up synth:", error);
     }
   }
 }
