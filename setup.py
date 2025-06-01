@@ -9,12 +9,12 @@ long_description = (this_directory / "README.md").read_text() if (this_directory
 setup(
     name="streamlit-abcjs-score",
     version="0.1.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Kenny Zhengyang Ma",
+    author_email="zmaaf@connect.ust.hk",
     description="A Streamlit component for rendering ABC notation as musical scores using abc.js",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/streamlit-abcjs-score",
+    url="https://github.com/zmk5566/streamlit-abcjs-score",
     packages=find_packages(),
     include_package_data=True,
     classifiers=[
