@@ -52,6 +52,7 @@ C D E F | G A B c | c B A G | F E D C |"""
             help="Enter ABC notation here. See http://abcnotation.com/ for syntax reference."
         )
         
+        
         # Information about ABC notation
         with st.expander("ℹ️ About ABC Notation"):
             st.markdown("""

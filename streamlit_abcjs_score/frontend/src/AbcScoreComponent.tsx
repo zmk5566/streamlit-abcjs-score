@@ -21,6 +21,7 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
   private currentNotation = ""
   private synthControl: any = null
   private visualObj: any = null
+  private pendingAudioUpdate = false
 
   public state = { numClicks: 0 }
 
@@ -158,7 +159,31 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
   }
 
   public componentDidUpdate = (): void => {
+    console.log("🎵 componentDidUpdate: Starting update process")
+    const newNotation = this.props.args["notation"]
+    const enableAudio = this.props.args["enable_audio"] !== false
+    
+    console.log("🎵 componentDidUpdate: newNotation =", newNotation?.substring(0, 50) + "...")
+    console.log("🎵 componentDidUpdate: currentNotation =", this.currentNotation?.substring(0, 50) + "...")
+    console.log("🎵 componentDidUpdate: enableAudio =", enableAudio)
+    
+    // Check if notation will change and mark for audio update
+    if (newNotation !== this.currentNotation && enableAudio) {
+      console.log("🎵 componentDidUpdate: Notation will change, marking for audio update")
+      this.pendingAudioUpdate = true
+    }
+    
+    // Always render ABC (it has its own change detection)
     this.renderAbc()
+    
+    // Check if we need to update audio after render
+    if (this.pendingAudioUpdate && enableAudio) {
+      console.log("🎵 componentDidUpdate: Processing pending audio update")
+      setTimeout(() => {
+        this.connectSynthAndNotation()
+        this.pendingAudioUpdate = false
+      }, 100)
+    }
   }
 
   /** Custom methods **/

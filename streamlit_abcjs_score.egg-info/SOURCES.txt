@@ -11,6 +11,6 @@ streamlit_abcjs_score/frontend/build/asset-manifest.json
 streamlit_abcjs_score/frontend/build/index.html
 streamlit_abcjs_score/frontend/build/static/css/main.3d33764b.css
 streamlit_abcjs_score/frontend/build/static/css/main.3d33764b.css.map
-streamlit_abcjs_score/frontend/build/static/js/main.77a9786e.js
-streamlit_abcjs_score/frontend/build/static/js/main.77a9786e.js.LICENSE.txt
-streamlit_abcjs_score/frontend/build/static/js/main.77a9786e.js.map
+streamlit_abcjs_score/frontend/build/static/js/main.6b91f966.js
+streamlit_abcjs_score/frontend/build/static/js/main.6b91f966.js.LICENSE.txt
+streamlit_abcjs_score/frontend/build/static/js/main.6b91f966.js.map
