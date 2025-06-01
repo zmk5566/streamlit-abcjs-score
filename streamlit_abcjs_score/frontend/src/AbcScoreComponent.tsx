@@ -122,7 +122,7 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
       style.width = `${width}px`
     }
     style.height = `${height}px`
-    style.overflow = "auto"
+    style.overflow = "inherit"
 
     return (
       <div style={style}>
@@ -174,7 +174,6 @@ class AbcScoreComponent extends StreamlitComponentBase<State> {
     }
     
     // Always render ABC (it has its own change detection)
-    this.renderAbc()
     
     // Check if we need to update audio after render
     if (this.pendingAudioUpdate && enableAudio) {

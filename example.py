@@ -11,6 +11,16 @@ def main():
     st.title("🎵 ABC.js Score Renderer for Streamlit")
     st.markdown("This component renders ABC notation as beautiful sheet music using the abc.js library.")
     
+    # Initialize session state for tracking example changes
+    if 'current_example' not in st.session_state:
+        st.session_state.current_example = "Custom"
+    if 'notation_text' not in st.session_state:
+        st.session_state.notation_text = """T: Simple Scale
+M: 4/4
+L: 1/4
+K: C
+C D E F | G A B c | c B A G | F E D C |"""
+    
     # Sidebar for controls
     st.sidebar.header("Controls")
     
@@ -19,8 +29,24 @@ def main():
     examples = list_examples()
     selected_example = st.sidebar.selectbox(
         "Choose an example:",
-        ["Custom"] + examples
+        ["Custom"] + examples,
+        key="example_selector"
     )
+    
+    # Check if example selection has changed
+    if selected_example != st.session_state.current_example:
+        st.session_state.current_example = selected_example
+        # Update notation text based on selection
+        if selected_example == "Custom":
+            st.session_state.notation_text = """T: Simple Scale
+M: 4/4
+L: 1/4
+K: C
+C D E F | G A B c | c B A G | F E D C |"""
+        else:
+            st.session_state.notation_text = get_example_notation(selected_example)
+        # Trigger rerun to refresh the component
+        st.rerun()
     
     # Rendering options
     st.sidebar.subheader("Rendering Options")
@@ -34,24 +60,18 @@ def main():
     with col1:
         st.subheader("ABC Notation Input")
         
-        # Set default notation based on selection
-        if selected_example == "Custom":
-            default_notation = """T: Simple Scale
-M: 4/4
-L: 1/4
-K: C
-C D E F | G A B c | c B A G | F E D C |"""
-        else:
-            default_notation = get_example_notation(selected_example)
-        
-        # Text area for ABC notation
+        # Text area for ABC notation - use session state value
         notation = st.text_area(
             "Enter your ABC notation:",
-            value=default_notation,
+            value=st.session_state.notation_text,
             height=300,
-            help="Enter ABC notation here. See http://abcnotation.com/ for syntax reference."
+            help="Enter ABC notation here. See http://abcnotation.com/ for syntax reference.",
+            key="notation_input"
         )
         
+        # Update session state when user manually edits the text
+        if notation != st.session_state.notation_text:
+            st.session_state.notation_text = notation
         
         # Information about ABC notation
         with st.expander("ℹ️ About ABC Notation"):
@@ -82,13 +102,16 @@ C D E F | G A B c | c B A G | F E D C |"""
         
         if notation.strip():
             try:
+                # Use a unique key that includes the example name to force component refresh
+                component_key = f"abc_renderer_{st.session_state.current_example}_{hash(notation) % 10000}"
+                
                 # Render the ABC notation
                 abc_score(
                     notation=notation,
                     height=height,
                     scale=scale,
                     responsive=responsive,
-                    key="abc_renderer"
+                    key=component_key
                 )
             except Exception as e:
                 st.error(f"Error rendering notation: {str(e)}")

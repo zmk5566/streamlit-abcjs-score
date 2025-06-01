@@ -189,7 +189,6 @@
 /* Fix for unwanted padding-bottom from ABCJS responsive mode */
 .abcjs-container {
 	padding-bottom: 0 !important;
-	margin-bottom: -30px;
 }
 
 /* Alternative fix targeting the specific responsive container */
