@@ -10,7 +10,7 @@ setup(
     name="streamlit-abcjs-score",
     version="0.1.0",
     author="Kenny Zhengyang Ma",
-    author_email="zmaaf@connect.ust.hk",
+    author_email="kenny.ma.2312@gmail.com",
     description="A Streamlit component for rendering ABC notation as musical scores using abc.js",
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -1,10 +1,10 @@
-Metadata-Version: 2.1
+Metadata-Version: 2.4
 Name: streamlit-abcjs-score
 Version: 0.1.0
 Summary: A Streamlit component for rendering ABC notation as musical scores using abc.js
-Home-page: https://github.com/yourusername/streamlit-abcjs-score
-Author: Your Name
-Author-email: your.email@example.com
+Home-page: https://github.com/zmk5566/streamlit-abcjs-score
+Author: Kenny Zhengyang Ma
+Author-email: kenny.ma.2312@gmail.com
 Classifier: Development Status :: 3 - Alpha
 Classifier: Intended Audience :: Developers
 Classifier: License :: OSI Approved :: MIT License
@@ -23,6 +23,16 @@ Requires-Dist: wheel; extra == "devel"
 Requires-Dist: pytest>=4; extra == "devel"
 Requires-Dist: pytest-cov; extra == "devel"
 Requires-Dist: black; extra == "devel"
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
 
 # Streamlit ABC.js Score Renderer
 
